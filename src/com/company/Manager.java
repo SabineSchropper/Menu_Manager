@@ -8,15 +8,21 @@ public class Manager {
     String url = "jdbc:mysql://localhost:3306/gastro?user=root";
     String sql = "";
 
-    public void addMenuName(String menuName) {
+    public int addMenuNameAndReturnNumber(String menuName) {
+        int number = 0;
         try {
             connection = DriverManager.getConnection(url);
             Statement statement = connection.createStatement();
             sql = "INSERT INTO menu (`name`) VALUES ('" + menuName + "')";
             statement.executeUpdate(sql);
+            sql = "SELECT max(number) FROM menu";
+            ResultSet rs = statement.executeQuery(sql);
+            rs.next();
+            number = rs.getInt(1);
         } catch (SQLException ex) {
             ex.fillInStackTrace();
         }
+        return number;
     }
 
     public void addIngredient(String ingredient, String menuName) {
@@ -83,7 +89,8 @@ public class Manager {
             while ((rs.next())) {
                 String name = rs.getString("name");
                 int number = rs.getInt("number");
-                System.out.println(name + " " + number);
+                double price = rs.getDouble("price");
+                System.out.println(name + " Nr. " + number + ", " + price + " €");
             }
             connection.close();
         } catch (SQLException ex) {
@@ -115,7 +122,7 @@ public class Manager {
         String menuName = "";
         try {
             connection = DriverManager.getConnection(url);
-            Statement statement = connection.createStatement();
+            statement = connection.createStatement();
             sql = "SELECT * FROM menu WHERE number = " + menuNumber + "";
             ResultSet rs = statement.executeQuery(sql);
             rs.next();
@@ -130,14 +137,37 @@ public class Manager {
     public void removeIngredient(int menuNumber, int ingredientNumber){
         try {
             connection = DriverManager.getConnection(url);
-            Statement statement = connection.createStatement();
-            sql = "DELETE FROM `menu_ingredient` WHERE menu_number = "+ menuNumber +
+            statement = connection.createStatement();
+            sql = "DELETE FROM `menu_ingredient` WHERE menu_number = "+ menuNumber + "" +
                     " AND ingredient_number = " + ingredientNumber +"";
-            statement.executeQuery(sql);
+            statement.executeUpdate(sql);
             connection.close();
         } catch (SQLException ex) {
             ex.fillInStackTrace();
         }
     }
-
+    public void deleteMenu(int menuNumber){
+        try {
+            connection = DriverManager.getConnection(url);
+            statement = connection.createStatement();
+            sql = "DELETE FROM `menu_ingredient` WHERE menu_number = "+ menuNumber + "";
+            statement.executeUpdate(sql);
+            sql = "DELETE FROM `menu` WHERE number = "+ menuNumber + "";
+            statement.executeUpdate(sql);
+            connection.close();
+        } catch (SQLException ex) {
+            ex.fillInStackTrace();
+        }
+    }
+    public void setPrice(int menuNumber, double price){
+        try {
+            connection = DriverManager.getConnection(url);
+            statement = connection.createStatement();
+            sql = "UPDATE `menu` SET price = "+ price +" WHERE number = "+ menuNumber + "";
+            statement.executeUpdate(sql);
+            connection.close();
+        } catch (SQLException ex) {
+            ex.fillInStackTrace();
+        }
+    }
 }
