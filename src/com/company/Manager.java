@@ -8,6 +8,16 @@ public class Manager {
     String url = "jdbc:mysql://localhost:3306/gastro?user=root";
     String sql = "";
 
+    public void showPossibilities(){
+        System.out.println("Bitte wählen Sie:");
+        System.out.println("1: Eingabe eines neuen Gerichts");
+        System.out.println("2: Festlegen des Preises");
+        System.out.println("3: Verändern eines Gerichts");
+        System.out.println("4: Eingabe der Zone/Preis");
+        System.out.println("5: Eingabe der Ortschaft/Zone");
+        System.out.println("6: Löschen eines Gerichts");
+        System.out.println("Beenden Sie die Eingabe mit 0");
+    }
     public int addMenuNameAndReturnNumber(String menuName) {
         int number = 0;
         try {
@@ -90,7 +100,7 @@ public class Manager {
                 String name = rs.getString("name");
                 int number = rs.getInt("number");
                 double price = rs.getDouble("price");
-                System.out.println(name + " Nr. " + number + ", " + price + " €");
+                System.out.println("Nr. " + number + " "+name+", " + price + " €");
             }
             connection.close();
         } catch (SQLException ex) {
